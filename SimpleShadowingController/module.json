@@ -1,0 +1,14 @@
+{
+    "id": "{757869DB-FA9A-4DA3-909E-34A711515F57}",
+    "name": "Simple Shadowing Controller",
+    "type": 3,
+    "vendor": "",
+    "aliases": [
+        "Simple Shadowing Controller"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "SCSM",
+    "url": "https://github.com/migodev/SimpleShadowingController"
+}

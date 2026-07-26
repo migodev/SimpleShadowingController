@@ -1,0 +1,34 @@
+{
+    "translations": {
+        "de": {
+            "Room Shadowing Controller": "Raum Beschattungssteuerung",
+            "Global Shadowing Status Variable": "Variable für globalen Beschattungsstatus",
+            "Input Temperature Current Variable": "Variable für aktuelle Raumtemperatur",
+            "Input Temperature Target Variable": "Variable für Ziel Raumtemperatur",
+            "Enable Room-Shadowing by Temperature": "Raum-Beschattung nach Innen-Temperatur aktivieren",
+            "Create Automatic": "Automatisch zuordnen (nur für Eltako FWS61/FWG14)",
+            "Temperature outdoor threshold": "Schwellwert für Außentemperatur",
+            "Input Outdoor Temperature Variable": "Variable für Außentemperatur",
+            "Current/Target Temperatur variables not found in FHK14": "Ist/Soll Temperatur Variablen wurden nicht gefunden im FHK14",
+            "Shutter Variables": "Rollladen/Raffstores Positions Variablen",
+            "Sun and Illumination Variables": "Sonnen und Helligkeitswerte",
+            "Azimut From": "Azimut Von Wert",
+            "Azimut To": "Azimut Bis Wert",
+            "Azimut Variable": "Azimut Variable",
+            "Brightness Variable": "Helligkeits Variable",
+            "Treshold Brightness": "Grenzwert Helligkeit",
+            "Outdoor Temperature": "Außentemperatur-Steuerung",
+            "Indoor Temperature": "Innentemperatur-Steuerung",
+            "Shutters": "Rollläden/Raffstores",
+            "Global Shadowing": "Globale Beschattung",
+            "Shadowing": "Beschattung",
+            "Percent Shadowing": "Prozent Beschattung",
+            "Percent Opening": "Prozent Geöffnet",
+            "Ignore Shutters above percent": "Ignoriere Rollladen/Raffstores oberhalb folgender Prozent",
+            "Move Mode": "Bewegungsmodus",
+            "Global ShutterControl": "Automatische Rollladensteuerung",
+            "Global Shutter Control Variable": "Automatische Rollladensteuerungs Variable",
+            "Notice: 'Ignore Shutters Above Percent' value must be greater than 'Percent Shadowing'.": "Hinweis: 'Ignoriere Rollladen/Raffstores Prozentwert' muss größer als der 'Prozent Beschattung' Wert sein."
+        }
+    }
+}

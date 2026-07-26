@@ -1,0 +1,213 @@
+{
+    "elements": [
+		{
+        "type": "Label",
+        "caption": "Shutters",
+        "bold": true
+        },
+		{
+            "type": "List",
+            "name": "ShutterVariables",
+            "caption": "Shutter Variables",
+            "add": true,
+            "delete": true,
+            "rowCount": 4,
+            "columns": [
+                {
+                    "name": "VariableID",
+                    "caption": "Variable",
+                    "width": "auto",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectVariable"
+                    }
+                },
+                {
+                    "name": "Status",
+                    "caption": "Status",
+                    "width": "100px",
+                    "add": "New"
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Sun and Illumination Variables",
+            "items": [{
+						"type": "NumberSpinner",
+						"name": "AzimutFrom",
+						"visible": true,
+						"caption": "Azimut From",
+						"suffix": "°",
+						"width": "400px"
+					},{
+						"type": "NumberSpinner",
+						"name": "AzimutTo",
+						"visible": true,
+						"caption": "Azimut To",
+						"suffix": "°",
+						"width": "400px"
+					},
+					{
+						"type": "SelectVariable",
+						"name": "AzimutId",
+						"caption": "Azimut Variable",
+						"width": "400px"
+					},
+					{
+						"type": "SelectVariable",
+						"name": "BrightnessId",
+						"caption": "Brightness Variable",
+						"width": "400px"
+					}]
+	    },
+		{ 
+			"type": "Label", 
+			"caption": "   " 
+		},
+		{
+			"type": "Label",
+			"caption": "Global Shadowing",
+			"bold": true
+        },
+		{
+			"type": "SelectVariable",
+			"name": "GlobalShadowingStatusVariable",
+			"caption": "Global Shadowing Status Variable",
+			"width": "400px"
+		},
+		{ 
+			"type": "Label", 
+			"caption": "   " 
+		},
+		{
+			"type": "Label",
+			"caption": "Global ShutterControl",
+			"bold": true
+        },
+		{
+			"type": "SelectVariable",
+			"name": "GlobalShutterControlVariable",
+			"caption": "Global Shutter Control Variable",
+			"width": "400px"
+		},
+		{ 
+			"type": "Label", 
+			"caption": "   " 
+		},
+		{
+			"type": "Label",
+			"caption": "Shadowing",
+			"bold": true
+        },
+		{
+			"type": "NumberSpinner",
+			"name": "ShadowingPercent",
+			"visible": true,
+			"caption": "Percent Shadowing",
+			"suffix": "%",
+			"width": "400px"
+		},
+		{
+			"type": "NumberSpinner",
+			"name": "OpenPercent",
+			"visible": true,
+			"caption": "Percent Opening",
+			"suffix": "%",
+			"width": "400px"
+		},
+		{
+			"type": "NumberSpinner",
+			"name": "IgnoreShutterPercent",
+			"visible": true,
+			"caption": "Ignore Shutters above percent",
+			"suffix": "%",
+			"width": "400px"
+		},
+		{
+			"type": "Label",
+			"name": "ErrorMessageIgnoreShutterPercent",
+			"visible": false,
+			"caption": "",
+			"color": 16711680
+		},
+		{
+			"type": "Select",
+			"name": "MoveMode",
+			"caption": "Move Mode",
+			"width": "150px",
+			"options": [
+				{
+					"caption": "Up & Down",
+					"value": 0
+				},
+				{
+					"caption": "Only Down",
+					"value": 1
+				}
+			]
+		},
+		{ 
+			"type": "Label", 
+			"caption": "Notice: 'Ignore Shutters Above Percent' value must be greater than 'Percent Shadowing'." 
+		},
+		{ 
+			"type": "Label", 
+			"caption": "   " 
+		},
+		{
+			"type": "Label",
+			"caption": "Indoor Temperature",
+			"bold": true
+        },
+		{
+			"type": "SelectVariable",
+			"name": "InputTemperatureCurrentVariable",
+			"caption": "Input Temperature Current Variable",
+			"width": "400px"
+		},
+		{
+			"type": "SelectVariable",
+			"name": "InputTemperatureTargetVariable",
+			"caption": "Input Temperature Target Variable",
+			"width": "400px"
+		},
+		{ 
+			"type": "Label", 
+			"caption": "   " 
+		},
+		{
+        "type": "Label",
+        "caption": "Outdoor Temperature",
+        "bold": true
+        },
+		{ 
+			"type": "HorizontalSlider", 
+			"name": "ThresholdTemperature", 
+			"caption": "Temperature outdoor threshold", 
+			"minimum": 0, 
+			"maximum": 20, 
+			"stepSize": 0.5,
+			"suffix": " Grad Celsius",
+			"displayValue": true
+		},
+		{
+			"type": "SelectVariable",
+			"name": "InputOutdoorTemperature",
+			"caption": "Input Outdoor Temperature Variable",
+			"width": "400px"
+		}
+    ],
+    "actions": [
+        {
+            "type": "TestCenter"
+        },
+		{
+		"type":  "RowLayout",
+		"items": [
+			{"type": "Button", "caption": "Create Automatic", "onClick": "SCSM_ImportVariables($id);"},
+			{"type": "Button", "caption": "Reset Pause", "onClick": "SCSM_resetPause($id);"}
+		]
+		}
+    ]
+}
