@@ -73,8 +73,6 @@ Status                          | Boolean             | Zeigt den aktuellen Besc
 | Variable für Ziel Raumtemperatur                      | integer | 0            | Die Variable welche die aktuelle Soll-Temperatur speichert. |
 | Schwellwert für Außentemperatur                       | integer | 10           | Definiert den Schwellwert ab wann die Beschattung von wegen Kälte deaktiviert wird. |
 | Variable für Außentemperatur                          | integer | 0            | Kann jede beliebige Variable sein, welche eine Außentemperatur abbildet. In der automatischen Zuordnung wird hier eine Eltako Wetterstation gesucht und hinterlegt. |
-
-
 | <em>Action-Center</em>                                |  		  |              |  														 |
 | Automatisch Zuordnen                                  |         |              | Via Klick wird die globale Beschattungs-Steuerung Variable gesucht sowie im aktuellen Raum das Eltako FHK14 und die Variablen automatisch vorbefüllt. |
 | Reset Pause                                           |         |              | Via Klick wird die Pause zwischen 2 Bewegungen resettet |
