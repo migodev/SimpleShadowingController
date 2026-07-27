@@ -1,7 +1,7 @@
 {
     "translations": {
         "de": {
-            "Room Shadowing Controller": "Raum Beschattungssteuerung",
+            "Simple Shadowing Controller": "Einfache Beschattungssteuerung",
             "Global Shadowing Status Variable": "Variable für globalen Beschattungsstatus",
             "Input Temperature Current Variable": "Variable für aktuelle Raumtemperatur",
             "Input Temperature Target Variable": "Variable für Ziel Raumtemperatur",
