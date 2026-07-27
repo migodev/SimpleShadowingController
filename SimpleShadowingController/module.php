@@ -335,7 +335,7 @@ class SimpleShadowingController extends IPSModule {
                     $this->SendDebug('execute', "End Shadowing on ".$shutterId.", because of MoveMode 1 we do not open - But Shadowing is on exit", 0);
                 }
             } else {
-                $this->SendDebug('execute', "Nothing Todo - Shutters are already moved", 0);
+                $this->SendDebug('execute', "Nothing Todo - Shutter is already moved", 0);
             }
         }
     }
@@ -495,13 +495,6 @@ class SimpleShadowingController extends IPSModule {
         }
         $this->UpdateFormField('GlobalShadowingStatusVariable', 'value', $varBeschattungsID);
         
-        // Treshold Brightness
-        /*if ($direction !== false) {
-            $tresholdId = IPS_FindObjectIDByName("Grenzwert Helligkeit Beschattung ".$direction, IPS_GetParent($varBeschattungsID));
-            $this->UpdateFormField('tresholdBrightnessId', 'value', $tresholdId);
-        }*/
-
-
         // find General Category & identify Bool Variable for global shutter control
         $foundGeneralCategory = false;
         $cat = IPS_GetCategoryList();
@@ -520,7 +513,6 @@ class SimpleShadowingController extends IPSModule {
         if ($varNachtabsenkungID !== false) {
             $this->UpdateFormField('GlobalShutterControlVariable', 'value', $varNachtabsenkungID);
         }
-
 
         // find Eltako Weatherstation
         $ch = IPS_GetInstanceListByModuleID('{9E4572C0-C306-4F00-B536-E75B4950F094}');
