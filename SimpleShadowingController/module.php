@@ -291,11 +291,11 @@ class SimpleShadowingController extends IPSModule {
         // If validation returns false and Shadowing Status is true, then we do Not Shadowing
         $currentStatus = $this->GetValue('StatusShadowing');
         $this->SendDebug('StatusShadowing', json_encode($currentStatus), 0);
-        if (($doShadowing === false) && ($currentStatus === true)) {
+        /*if (($doShadowing === false) && ($currentStatus === true)) {
             // Open & Exit Shadowing
             $doShadowing = false;
             $this->SendDebug('execute', "Shadowing currently active, disabled by validation", 0);
-        }
+        }*/
         
         //Keep Pause for defined minutes
         if (($doShadowing === true) && ($currentStatus === false)) {
