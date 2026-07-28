@@ -296,21 +296,28 @@ class SimpleShadowingController extends IPSModule {
             $doShadowing = false;
             $this->SendDebug('execute', "Shadowing currently active, disabled by validation", 0);
         }
+        
+        //Keep Pause for defined minutes
+        if (($doShadowing === true) && ($currentStatus === false)) {
+            if ($this->checkAndSetPause() === false) { return false; }
+        } elseif (($doShadowing === false) && ($currentStatus === true)) {
+            if ($this->checkAndSetPause() === false) { return false; }
+        } else {
+            $this->SendDebug('execute', "Nothing Todo - Shutters are already moved - EXIT", 0);
+            return false;
+        }
 
         $shutterVariables = json_decode($this->ReadPropertyString('ShutterVariables'), true);
         foreach ($shutterVariables as $shutter) {
             $shutterId = $shutter['VariableID'];
 
-            // skip 100% shutter
+            // skip > than Ignore-Value shutter
             if (GetValue($shutterId) >= $this->ReadPropertyInteger('IgnoreShutterPercent')) {
                 $this->SendDebug('execute', "Skip Shutter with ID ".$shutterId." because its closed: greater (".GetValue($shutterId)."%) than ".$this->ReadPropertyInteger('IgnoreShutterPercent')."%", 0);
                 continue;
             }
             
             if (($doShadowing === true) && ($currentStatus === false)) {
-                //Keep Pause for defined minutes
-                if ($this->checkAndSetPause() === false) { return false; }
-
                 if (HasAction($shutterId)) {
                     RequestAction($shutterId, $shadowingPercent);
                 } else {
@@ -319,9 +326,6 @@ class SimpleShadowingController extends IPSModule {
                 $this->SetValue('StatusShadowing', true);
                 $this->SendDebug('execute', "Do Shadowing on ".$shutterId." and move to percent: ".$shadowingPercent, 0);
             } elseif (($doShadowing === false) && ($currentStatus === true)) {
-                //Keep Pause for defined minutes
-                if ($this->checkAndSetPause() === false) { return false; }
-
                 if ($this->ReadPropertyInteger('MoveMode') !== 1) {
                     if (HasAction($shutterId)) {
                         RequestAction($shutterId, $openPercent);
@@ -334,8 +338,6 @@ class SimpleShadowingController extends IPSModule {
                     $this->SetValue('StatusShadowing', false);
                     $this->SendDebug('execute', "End Shadowing on ".$shutterId.", because of MoveMode 1 we do not open - But Shadowing is on exit", 0);
                 }
-            } else {
-                $this->SendDebug('execute', "Nothing Todo - Shutter is already moved", 0);
             }
         }
     }
