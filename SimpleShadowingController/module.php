@@ -353,7 +353,6 @@ class SimpleShadowingController extends IPSModule {
                 // Activate only if global Status = true and RoomControl = false, otherwise enablement is controlled via Temperature Rule
                 $this->SendDebug('status', "enabled by globalShadowingStatus and EvaluationIndoorTemperature = false", 0);
                 $this->SetActive(true);
-                return true;
             }
         }
 
