@@ -282,20 +282,15 @@ class SimpleShadowingController extends IPSModule {
                 return false;
             }
         } else {
-                $this->SendDebug('execute', "Global Shutter Control Variable not set, continue executing", 0);
+            $this->SendDebug('execute', "Global Shutter Control Variable not set, continue executing", 0);
         }
 
         $shadowingPercent   = $this->ReadPropertyInteger("ShadowingPercent");
         $openPercent        = $this->ReadPropertyInteger("OpenPercent");
 
-        // If validation returns false and Shadowing Status is true, then we do Not Shadowing
+        // get Shadowing Status
         $currentStatus = $this->GetValue('StatusShadowing');
         $this->SendDebug('StatusShadowing', json_encode($currentStatus), 0);
-        /*if (($doShadowing === false) && ($currentStatus === true)) {
-            // Open & Exit Shadowing
-            $doShadowing = false;
-            $this->SendDebug('execute', "Shadowing currently active, disabled by validation", 0);
-        }*/
         
         //Keep Pause for defined minutes
         if (($doShadowing === true) && ($currentStatus === false)) {
@@ -397,13 +392,25 @@ class SimpleShadowingController extends IPSModule {
         }
         
         // Validate Azimut
-        $azimut = GetValue($this->ReadPropertyInteger('AzimutId'));
-        $azifr = $this->ReadPropertyInteger('AzimutFrom');
-        $azito = $this->ReadPropertyInteger('AzimutTo');
+        $azimutCheck = $this->validateAzimut();
+        
+        // Check Brightness
+        $brightnessCheck = $this->validateBrightness();
 
-        $azimutCheck = false;
-        $brightnessCheck = false;
+        // if both azimut and brightness are OK, then return true
+        if (($azimutCheck === true) && ($brightnessCheck === true)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    private function validateAzimut() {
+        $azimut         = GetValue($this->ReadPropertyInteger('AzimutId'));
+        $azifr          = $this->ReadPropertyInteger('AzimutFrom');
+        $azito          = $this->ReadPropertyInteger('AzimutTo');
+        $azimutCheck    = false;
+        
         if ($azifr > $azito) {
             // eg. 270 - 60
            if (($azimut > $azifr) || ($azimut < $azito)) {
@@ -423,11 +430,14 @@ class SimpleShadowingController extends IPSModule {
                 $azimutCheck = false;
             }
         }
-        
-        // Check Brightness
-        $brightness = GetValue($this->ReadPropertyInteger('BrightnessId'));
-        $brightnessTreshold = $this->GetValue('tresholdBrightness');
-        
+        return $azimutCheck;
+    }
+
+    private function validateBrightness() {
+        $brightness             = GetValue($this->ReadPropertyInteger('BrightnessId'));
+        $brightnessTreshold     = $this->GetValue('tresholdBrightness');
+        $brightnessCheck        = false;
+
         if ($brightness >= $brightnessTreshold) {
             $this->SendDebug('validation', "Brightness (".$brightness.") is above treshold: ".$brightnessTreshold, 0);
             $brightnessCheck = true;
@@ -435,13 +445,7 @@ class SimpleShadowingController extends IPSModule {
             $this->SendDebug('validation', "Brightness (".$brightness.") is below treshold: ".$brightnessTreshold, 0);
             $brightnessCheck = false;
         }
-
-        // if both azimut and brightness are OK, then return true
-        if (($azimutCheck === true) && ($brightnessCheck === true)) {
-            return true;
-        } else {
-            return false;
-        }
+        return $brightnessCheck;
     }
 
     public function ImportVariables() {
