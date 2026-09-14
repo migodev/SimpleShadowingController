@@ -28,6 +28,8 @@ class SimpleShadowingController extends IPSModule {
         $this->RegisterPropertyInteger('InputOutdoorTemperature', 0);
 
         $this->RegisterAttributeInteger('LastExecute', 0);
+        $this->RegisterAttributeBoolean('InstanceState', false);
+        
 
         //Variables
         $ActiveOptions = json_encode([
@@ -166,8 +168,14 @@ class SimpleShadowingController extends IPSModule {
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
         //https://www.symcon.de/en/service/documentation/developer-area/sdk-tools/sdk-php/messages/
         if ($Message == VM_UPDATE) {          
-            $result = $this->validateShadowing($Data[0], $SenderID);
-            $this->executeShadowing($result);
+            if ($this->ReadAttributeBoolean('InstanceState') === false) {
+                $this->WriteAttributeBoolean('InstanceState', true); // Set Running State
+                $result = $this->validateShadowing($Data[0], $SenderID);
+                $this->executeShadowing($result);
+                $this->WriteAttributeBoolean('InstanceState', false); // Clear Running State
+            } else {
+                $this->SendDebug('message-sink', "Parallel Execute (from Sender: ".$SenderID." not allowed - Skipping", 0);
+            }
         }
     }
     
