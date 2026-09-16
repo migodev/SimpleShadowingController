@@ -59,6 +59,12 @@
 						"name": "BrightnessId",
 						"caption": "Brightness Variable",
 						"width": "400px"
+					},
+					{
+						"type": "NumberSpinner",
+						"name": "brightnessAvgMinutes",
+						"caption": "Brightness Avg Minutes",
+						"width": "400px"
 					}]
 	    },
 		{ 

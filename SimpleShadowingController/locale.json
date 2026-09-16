@@ -16,6 +16,7 @@
             "Azimut To": "Azimut Bis Wert",
             "Azimut Variable": "Azimut Variable",
             "Brightness Variable": "Helligkeits Variable",
+            "Brightness Avg Minutes": "Durchschnitt in Minuten für Helligkeitsberechnung",
             "Treshold Brightness": "Grenzwert Helligkeit",
             "Outdoor Temperature": "Außentemperatur-Steuerung",
             "Indoor Temperature": "Innentemperatur-Steuerung",

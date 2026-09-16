@@ -63,6 +63,7 @@ Status                          | Boolean             | Zeigt den aktuellen Besc
 | Azimut Bis Wert                                       | integer | 0            | Bis zu diesem Wert wird beschattet. |
 | Azimut Variable                                       | integer | 0            | Azimut Variable unter Kern-Instanzen/Standort |
 | Helligkeits Variable                                  | integer | 0            | Helligkeits Variable zum Abgleich des Grenzwerts. In der Regel eine Variable einer Wetterstation |
+| Durchschnitt in Minuten für Helligkeitsberechnung     | integer | 0            | Angabe in Minuten für die ein Durchschnittswert aus der Helligkeit errechnet wird. Die Helligkeits-Variable muss dazu archiviert werden. |
 | Variable für globalen Beschattungsstatus              | integer | 0            | Die globale Variable die die globale Beschattung steuert. In der Regel unter Allgemein/Beschattung/Aktivierung globale Beschattung |
 | Variable für automatische Rollosteuerung              | integer | 0            | Kann optional gesetzt werden, wenn eine globale Steuervariable für die Rollladen/Raffstores existiert, damit wird sichergestellt, dass die Beschattung nur funktioniert, wenn die Rollladen sich bewegen sollen. |
 | Prozent Beschattung                                   | integer | 0            | Prozentwert auf welchen bei Beschattung der Rollladen/Raffstore gefahren werden soll. |

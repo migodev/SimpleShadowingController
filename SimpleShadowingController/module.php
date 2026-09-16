@@ -19,6 +19,8 @@ class SimpleShadowingController extends IPSModule {
         $this->RegisterPropertyInteger('IgnoreShutterPercent', 100);
         $this->RegisterPropertyInteger('MoveMode', 0);
 
+        $this->RegisterPropertyInteger('brightnessAvgMinutes', 15);
+
         $this->RegisterPropertyInteger('InputTemperatureCurrentVariable', 0);
         $this->RegisterPropertyInteger('InputTemperatureTargetVariable', 0);
         $this->RegisterPropertyInteger('GlobalShadowingStatusVariable', 0);
@@ -442,9 +444,11 @@ class SimpleShadowingController extends IPSModule {
     }
 
     private function validateBrightness() {
-        $brightness             = GetValue($this->ReadPropertyInteger('BrightnessId'));
+        $brightnessId            = $this->ReadPropertyInteger('BrightnessId');
         $brightnessTreshold     = $this->GetValue('tresholdBrightness');
         $brightnessCheck        = false;
+        
+        $brightness = $this->getAverageBrightness($brightnessId); // Get Average Value from archive based on configured minutes
 
         if ($brightness >= $brightnessTreshold) {
             $this->SendDebug('validation', "Brightness (".$brightness.") is above treshold: ".$brightnessTreshold, 0);
@@ -454,6 +458,38 @@ class SimpleShadowingController extends IPSModule {
             $brightnessCheck = false;
         }
         return $brightnessCheck;
+    }
+
+    private function getAverageBrightness($brightnessID) {
+        if (!IPS_VariableExists($brightnessID)) {
+            $this->SendDebug('average-brightness', "Brightness Variable (".$brightnessID.") does not exists ", 0);    
+            return null;
+        }
+
+        $currentBrightness    = (int)GetValue($brightnessID);
+        $brightnessAvgMinutes = $this->ReadPropertyInteger('brightnessAvgMinutes'); 
+
+	    $archiveIds = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}');
+        if (empty($archiveIds)) {
+            $this->SendDebug('average-brightness', "no archive found", 0); 
+            return $currentBrightness;
+        }
+        $archiveId = $archiveIds[0];
+
+        if (AC_GetLoggingStatus($archiveId, $brightnessID)) {
+            
+			$werte = @AC_GetAggregatedValues($archiveId, $brightnessID, 6, strtotime('-' . $brightnessAvgMinutes . ' minutes'), time(), 0);
+            if (empty($werte)) {
+                return (int)GetValue($brightnessID);
+            }
+
+            $brightnessAvg = (int)round(array_sum(array_column($werte, 'Avg')) / count($werte), 0);
+            $this->SendDebug('average-brightness', "Brightness (".$brightnessID.") calculated to value: ".$brightnessAvg, 0); 
+            return $brightnessAvg;
+		}
+		$this->SendDebug('average-brightness', "Brightness Variable (".$brightnessID.") not logged in archive", 0); 
+		return $currentBrightness;
+    
     }
 
     public function ImportVariables() {
