@@ -211,7 +211,7 @@
 		{
 		"type":  "RowLayout",
 		"items": [
-			{"type": "Button", "caption": "Create Automatic", "onClick": "SCSM_ImportVariables($id);"},
+			{"type": "Button", "caption": "Create Automatic", "onClick": "SCSM_ImportVariables($id);", "confirm": "Warning: This process will create categories at the top level of your object tree and add control variables there. Continue?"},
 			{"type": "Button", "caption": "Reset Pause", "onClick": "SCSM_resetPause($id);"}
 		]
 		}

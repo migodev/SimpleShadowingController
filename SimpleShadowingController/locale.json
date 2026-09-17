@@ -29,7 +29,8 @@
             "Move Mode": "Bewegungsmodus",
             "Global ShutterControl": "Automatische Rollladensteuerung",
             "Global Shutter Control Variable": "Automatische Rollladensteuerungs Variable",
-            "Notice: 'Ignore Shutters Above Percent' value must be greater than 'Percent Shadowing'.": "Hinweis: 'Ignoriere Rollladen/Raffstores Prozentwert' muss größer als der 'Prozent Beschattung' Wert sein."
+            "Notice: 'Ignore Shutters Above Percent' value must be greater than 'Percent Shadowing'.": "Hinweis: 'Ignoriere Rollladen/Raffstores Prozentwert' muss größer als der 'Prozent Beschattung' Wert sein.",
+            "Warning: This process will create categories at the top level of your object tree and add control variables there. Continue?": "Achtung: Dieser Vorgang erstellt Kategorien auf der Hauptebene Ihres Objekbaumes und legt dort Steuerungsvariablen an. Fortfahren?"
         }
     }
 }

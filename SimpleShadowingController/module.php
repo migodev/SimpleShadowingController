@@ -545,14 +545,13 @@ class SimpleShadowingController extends IPSModule {
         $this->UpdateFormField('GlobalShadowingStatusVariable', 'value', $varBeschattungsID);
         
         // find General Category & identify Bool Variable for global shutter control
-        $foundGeneralCategory = false;
+        $nightShutterCatId = 0;
         $cat = IPS_GetCategoryList();
         foreach ($cat as $c) {
             $catInfo = IPS_GetObject($c);
             if ($catInfo['ObjectName'] == 'Nachtabsenkung') {
                 $pc = IPS_GetObject(IPS_GetParent($catInfo['ObjectID']));
                 if ($pc['ObjectName'] == "Allgemein") {
-                    $foundGeneralCategory = true;
                     $nightShutterCatId = $catInfo['ObjectID'];
                     break;
                 }
