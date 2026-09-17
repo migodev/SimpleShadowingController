@@ -373,8 +373,13 @@ class SimpleShadowingController extends IPSModule {
             $threshold = $this->ReadPropertyFloat('ThresholdTemperature');
             if ($outdoorTemp < $threshold) {
                 $this->SetActive(false);
-                $this->SendDebug('status', "disabled by ColdShadowing", 0);
-                return false;
+                $this->SendDebug('status', "disabled by ColdShadowing - Temperature (".$outdoorTemp.") below threshold (".$threshold.")", 0);
+            } else {
+                if ($this->GetValue('EvaluationIndoorTemperature') === false) {
+                    // Only if Indoor Temperature Check is not active
+                    $this->SetActive(true);
+                    $this->SendDebug('status', "enabled by ColdShadowing - Temperature (".$outdoorTemp.") above threshold (".$threshold.")", 0);
+                }
             }
         }
 
