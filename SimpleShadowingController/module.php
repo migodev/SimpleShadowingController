@@ -77,7 +77,7 @@ class SimpleShadowingController extends IPSModule {
 
         $this->RegisterVariableInteger("AverageBrightness", 'Durchschnitt Helligkeit', [
             "PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            "MIN" => 1000,
+            "MIN" => 0,
             "MAX" => 100000,
             "SUFFIX" => " Lux", 
             "ICON" => "brightness"
