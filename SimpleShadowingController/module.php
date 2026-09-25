@@ -281,7 +281,7 @@ class SimpleShadowingController extends IPSModule {
             if (($lastExecute + $diffExecute) < time()) {
                 // Set new Execute Time
                 $this->WriteAttributeInteger('LastExecute', time());
-                $this->SendDebug('execute', "LastExecute exceeded (".date("H:i:s", $lastExecute)." - ".date("H:i:s", $lastExecute + $diffExecute)."), continue", 0);
+                $this->SendDebug('execute', "LastExecute exceeded (".date("d.m.Y H:i:s", $lastExecute)." - ".date("d.m.Y H:i:s", $lastExecute + $diffExecute)."), continue", 0);
                 return true;
             } else {
                 $ddiff = ($lastExecute + $diffExecute)-time();
@@ -319,7 +319,10 @@ class SimpleShadowingController extends IPSModule {
         if (($doShadowing === true) && ($currentStatus === false)) {
             if ($this->checkAndSetPause() === false) { return false; }
         } elseif (($doShadowing === false) && ($currentStatus === true)) {
-            if ($this->checkAndSetPause() === false) { return false; }
+            if ($this->GetValue('Active') === true) {
+                // only check time if instance is active, otherwise execute
+                if ($this->checkAndSetPause() === false) { return false; }
+            }
         } else {
             $this->SendDebug('execute', "Nothing Todo - Shutters are already moved - EXIT", 0);
             return false;
