@@ -52,7 +52,7 @@ Auswertung Innentemperaturen    | Boolean             | Aktiviert die Innenraum 
 Pause zwischen 2 Bewegungen     | Integer             | Anzahl an Minuten die zwischen 2 Bewegungen am Rollladen/Raffstore gewartet wird
 Grenzwert Helligkeit            | Integer             | Helligkeit in Lux ab der die Beschattung auslöst
 Status                          | Boolean             | Zeigt den aktuellen Beschattungsstatus an, true bedeutet es wird gerade beschattet
-
+Durchschnitt Helligkeit         | Integer             | Berechneter Durchschnittswert der Helligkeit auf Basis der eingestellten Minuten
 
 ### 6. Konfiguration
 

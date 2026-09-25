@@ -74,6 +74,19 @@ class SimpleShadowingController extends IPSModule {
         $this->EnableAction('tresholdBrightness');
 
         $this->RegisterVariableBoolean('StatusShadowing', 'Status', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'shutters'], 6);
+
+        $this->RegisterVariableInteger("AverageBrightness", 'Durchschnitt Helligkeit', [
+            "PRESENTATION" => VARIABLE_PRESENTATION_SLIDER,
+            "MIN" => 1000,
+            "MAX" => 100000,
+            "STEP_SIZE" => 1000,
+            "USAGE_TYPE" => 5,
+            "GRADIENT_TYPE" => 0, 
+            "SUFFIX" => " Lux", 
+            "ICON" => "brightness"
+        ], 7);
+        $varAvgBrId = $this->GetIDForIdent("AverageBrightness");
+        IPS_SetHidden ($varAvgBrId, true);
     }
     
     public function ApplyChanges() {
@@ -477,6 +490,7 @@ class SimpleShadowingController extends IPSModule {
 	    $archiveIds = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}');
         if (empty($archiveIds)) {
             $this->SendDebug('average-brightness', "no archive found", 0); 
+            $this->SetValue('AverageBrightness', $currentBrightness);
             return $currentBrightness;
         }
         $archiveId = $archiveIds[0];
@@ -485,14 +499,18 @@ class SimpleShadowingController extends IPSModule {
             
 			$werte = @AC_GetAggregatedValues($archiveId, $brightnessID, 6, strtotime('-' . $brightnessAvgMinutes . ' minutes'), time(), 0);
             if (empty($werte)) {
-                return (int)GetValue($brightnessID);
+                $this->SendDebug('average-brightness', "Brightness Variable (".$brightnessID.") is logged in archive, but no data available", 0);  
+                $this->SetValue('AverageBrightness', $currentBrightness);
+                return $currentBrightness;
             }
 
             $brightnessAvg = (int)round(array_sum(array_column($werte, 'Avg')) / count($werte), 0);
-            $this->SendDebug('average-brightness', "Brightness (".$brightnessID.") calculated to value: ".$brightnessAvg, 0); 
+            $this->SendDebug('average-brightness', "Brightness Variable (".$brightnessID.") calculated to value: ".$brightnessAvg, 0); 
+            $this->SetValue('AverageBrightness', $brightnessAvg);
             return $brightnessAvg;
 		}
 		$this->SendDebug('average-brightness', "Brightness Variable (".$brightnessID.") not logged in archive", 0); 
+        $this->SetValue('AverageBrightness', $currentBrightness);
 		return $currentBrightness;
     
     }
