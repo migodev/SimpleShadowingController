@@ -2,6 +2,7 @@
 Das Modul erlaubt es auf Basis der Innentemperatur eines Raumes eine Steuervariable zu schalten, um darüber die Beschattung des Raumes zu ermöglichen.
 Damit wird der Raum erst dann beschattet, wenn die Soll-Temperatur erreicht ist.
 Weiterhin ist optional auch die Beschattung bei Kälte auszusetzen, bis es wieder wärmer ist.
+Die Automatische Steuerung kann über eine Steuervariable aktiviert/deaktiviert werden.
 
 Im Vergleich zu unserem Raum-Beschattungs-Steuerung Modul kann mit diesem Modul auch die gesamte Beschattung realisiert werden, d.h. es werden Azimut & Helligkeitswerte berücksichtigt sowie Rollladen/Raffstores direkt angesteuert.
 Hierzu können die diversen Parameter einzeln konfiguriert werden.
@@ -53,6 +54,7 @@ Pause zwischen 2 Bewegungen     | Integer             | Anzahl an Minuten die zw
 Grenzwert Helligkeit            | Integer             | Helligkeit in Lux ab der die Beschattung auslöst
 Status                          | Boolean             | Zeigt den aktuellen Beschattungsstatus an, true bedeutet es wird gerade beschattet
 Durchschnitt Helligkeit         | Integer             | Berechneter Durchschnittswert der Helligkeit auf Basis der eingestellten Minuten
+Automatische Steuerung          |Boolean              | Aktiviert/Deaktivierung die automatische Steuerung auf Basis der innen/außen Temperaturen. Wenn Deaktiviert, kann die "Raum Beschattung aktiv" Variable manuell gesteuert werden.
 
 ### 6. Konfiguration
 

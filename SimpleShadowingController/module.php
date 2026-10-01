@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-class SimpleShadowingController extends IPSModule {
+class SimpleShadowingController extends IPSModuleStrict {
     
-    public function Create() {
+    public function Create(): void {
         parent::Create();
         
         //Properties
@@ -84,9 +84,15 @@ class SimpleShadowingController extends IPSModule {
         ], 7);
         $varAvgBrId = $this->GetIDForIdent("AverageBrightness");
         IPS_SetHidden ($varAvgBrId, true);
+
+        $createAutomaticControl = $this->RegisterVariableBoolean('AutomaticControl', 'Automatische Steuerung', ['PRESENTATION' => VARIABLE_PRESENTATION_ENUMERATION, 'ICON' => 'power-off', 'OPTIONS' => $ActiveOptions], 8);
+        if ($createAutomaticControl) {
+            $this->SetValue("AutomaticControl", true);
+        }
+        $this->EnableAction('AutomaticControl');
     }
     
-    public function ApplyChanges() {
+    public function ApplyChanges(): void {
         parent::ApplyChanges();
         
         //Unregister all messages
@@ -149,8 +155,19 @@ class SimpleShadowingController extends IPSModule {
 
         $this->SetStatus(IS_ACTIVE);
     }
-    
-    public function GetConfigurationForm() {
+
+    public function Migrate(string $JSONData): string {
+        parent::Migrate($JSONData);
+
+        $data = json_decode($JSONData);
+        $this->SendDebug('migrate', "InstanceState at Loading: ".json_encode($data->attributes->InstanceState), 0);
+        #if (isset($data->attributes->InstanceState)) {
+            $this->WriteAttributeBoolean("InstanceState", false);
+        #}
+        return json_encode($data);
+    }
+
+    public function GetConfigurationForm(): string {
         //Add options to form
         $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
                 
@@ -177,7 +194,7 @@ class SimpleShadowingController extends IPSModule {
         return json_encode($jsonForm);
     }
 
-    public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
+    public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void {
         //https://www.symcon.de/en/service/documentation/developer-area/sdk-tools/sdk-php/messages/
         if ($Message == VM_UPDATE) {          
             if ($this->ReadAttributeBoolean('InstanceState') === false) {
@@ -191,7 +208,7 @@ class SimpleShadowingController extends IPSModule {
         }
     }
     
-    public function SetActive(bool $Value) {
+    public function SetActive(bool $Value): void {
         if ($this->GetValue('Active') !== $Value) {
             $this->SetValue('Active', $Value);
 
@@ -201,40 +218,49 @@ class SimpleShadowingController extends IPSModule {
         }
     }
 
-    public function SetColdShadowing(bool $Value) {
+    public function SetAutomaticControl(bool $Value): void {
+        if ($this->GetValue('AutomaticControl') !== $Value) {
+            $this->SetValue('AutomaticControl', $Value);
+        }
+    }
+
+    public function SetColdShadowing(bool $Value): void {
         if ($this->GetValue('ColdShadowing') !== $Value) {
             $this->SetValue('ColdShadowing', $Value);
         }
     }
 
-    public function SetEvaluationIndoorTemperature(bool $Value) {
+    public function SetEvaluationIndoorTemperature(bool $Value): void {
         if ($this->GetValue('EvaluationIndoorTemperature') !== $Value) {
             $this->SetValue('EvaluationIndoorTemperature', $Value);
         }
     }
 
-    public function SetPauseBetweenMovements(int $Value) {
+    public function SetPauseBetweenMovements(int $Value): void {
         if ($this->GetValue('PauseBetweenMovements') !== $Value) {
             $this->SetValue('PauseBetweenMovements', $Value);
             $this->resetPause();
         }
     }
 
-    public function SetTresholdBrightness(int $Value) {
+    public function SetTresholdBrightness(int $Value): void {
         if ($this->GetValue('tresholdBrightness') !== $Value) {
             $this->SetValue('tresholdBrightness', $Value);
         }
     }
 
-    public function resetPause() {
+    public function resetPause(): void {
         $this->WriteAttributeInteger('LastExecute', 0);
         $this->SendDebug('LastExecute', "Reset LastExecute", 0);
     }
 
-    public function RequestAction($Ident, $Value) {
+    public function RequestAction(string $Ident, mixed $Value): void {
         switch ($Ident) {
             case 'Active':
                 $this->SetActive($Value);
+                break;
+            case 'AutomaticControl':
+                $this->SetAutomaticControl($Value);
                 break;
             case 'ColdShadowing':
                 $this->SetColdShadowing($Value);
@@ -253,7 +279,7 @@ class SimpleShadowingController extends IPSModule {
         }
     }
 
-    private function GetShutterVariableStatus($outputID) {
+    private function GetShutterVariableStatus(int $outputID): string {
         if (!IPS_VariableExists($outputID)) {
             return 'Missing';
         } else {
@@ -266,7 +292,7 @@ class SimpleShadowingController extends IPSModule {
         }
     }
 
-    private function checkAndSetPause() {
+    private function checkAndSetPause(): bool {
         $lastExecute = $this->ReadAttributeInteger('LastExecute');
         if ($lastExecute === 0) {
             // not set, so we set time
@@ -288,7 +314,7 @@ class SimpleShadowingController extends IPSModule {
         }
     }
 
-    private function executeShadowing($doShadowing) {
+    private function executeShadowing(bool $doShadowing): bool {
         $this->SendDebug('execute', "Calling executeShadowing with Param: ".json_encode($doShadowing), 0);
 
         if (($this->GetValue('Active') !== true) && ($doShadowing === true)) {
@@ -296,6 +322,11 @@ class SimpleShadowingController extends IPSModule {
             return false;
         }
         
+        if ($this->GetValue('AutomaticControl') === false) {
+            $this->SendDebug('automatic-control exec', "automatic-control is disabled and exit", 0);
+            return false;
+        }
+
         if ($this->ReadPropertyInteger("GlobalShutterControlVariable") > 0) {                
             if (GetValue($this->ReadPropertyInteger('GlobalShutterControlVariable')) === false) {
                 $this->SendDebug('execute', "Global Shutter Control not active, exit", 0);
@@ -358,9 +389,10 @@ class SimpleShadowingController extends IPSModule {
                 }
             }
         }
+        return true;
     }
 
-    private function validateShadowing($data, $senderId) {
+    private function validateShadowing(mixed $data, int $senderId): bool {
         //Exit if global shadowing is disabled
         $globalShadowingStatus = GetValue($this->ReadPropertyInteger('GlobalShadowingStatusVariable'));
         $this->SendDebug('globalShadowingStatus', json_encode($globalShadowingStatus), 0);
@@ -377,6 +409,11 @@ class SimpleShadowingController extends IPSModule {
         if ($globalShadowingStatus === false) {
             $this->SetActive(false);
             $this->SendDebug('status', "disabled by globalShadowingStatus", 0);
+            return false;
+        }
+
+        if ($this->GetValue('AutomaticControl') === false) {
+            $this->SendDebug('automatic-control', "automatic-control is disabled and exit", 0);
             return false;
         }
 
@@ -433,7 +470,7 @@ class SimpleShadowingController extends IPSModule {
         }
     }
 
-    private function validateAzimut() {
+    private function validateAzimut(): bool {
         $azimut         = GetValue($this->ReadPropertyInteger('AzimutId'));
         $azifr          = $this->ReadPropertyInteger('AzimutFrom');
         $azito          = $this->ReadPropertyInteger('AzimutTo');
@@ -461,7 +498,7 @@ class SimpleShadowingController extends IPSModule {
         return $azimutCheck;
     }
 
-    private function validateBrightness() {
+    private function validateBrightness(): bool {
         $brightnessId            = $this->ReadPropertyInteger('BrightnessId');
         $brightnessTreshold     = $this->GetValue('tresholdBrightness');
         $brightnessCheck        = false;
@@ -478,7 +515,7 @@ class SimpleShadowingController extends IPSModule {
         return $brightnessCheck;
     }
 
-    private function getAverageBrightness($brightnessID) {
+    private function getAverageBrightness(int $brightnessID): int {
         if (!IPS_VariableExists($brightnessID)) {
             $this->SendDebug('average-brightness', "Brightness Variable (".$brightnessID.") does not exists ", 0);    
             return null;
@@ -515,7 +552,7 @@ class SimpleShadowingController extends IPSModule {
     
     }
 
-    public function ImportVariables() {
+    public function ImportVariables(): void {
         $validDirections = array("Ost", "West", "Süd");
         $selfNameArray = explode(" ", IPS_GetName($this->InstanceID));
         $direction = end($selfNameArray); // Naming like Beschattungssteuerung Ost
