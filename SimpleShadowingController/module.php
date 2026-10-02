@@ -29,9 +29,7 @@ class SimpleShadowingController extends IPSModuleStrict {
         $this->RegisterPropertyFloat('ThresholdTemperature', 10);
         $this->RegisterPropertyInteger('InputOutdoorTemperature', 0);
 
-        $this->RegisterAttributeInteger('LastExecute', 0);
-        $this->RegisterAttributeBoolean('InstanceState', false);
-        
+        $this->RegisterAttributeInteger('LastExecute', 0);   
 
         //Variables
         $ActiveOptions = json_encode([
@@ -156,17 +154,6 @@ class SimpleShadowingController extends IPSModuleStrict {
         $this->SetStatus(IS_ACTIVE);
     }
 
-    public function Migrate(string $JSONData): string {
-        parent::Migrate($JSONData);
-
-        $data = json_decode($JSONData);
-        $this->SendDebug('migrate', "InstanceState at Loading: ".json_encode($data->attributes->InstanceState), 0);
-        #if (isset($data->attributes->InstanceState)) {
-            $this->WriteAttributeBoolean("InstanceState", false);
-        #}
-        return json_encode($data);
-    }
-
     public function GetConfigurationForm(): string {
         //Add options to form
         $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
@@ -197,13 +184,15 @@ class SimpleShadowingController extends IPSModuleStrict {
     public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void {
         //https://www.symcon.de/en/service/documentation/developer-area/sdk-tools/sdk-php/messages/
         if ($Message == VM_UPDATE) {          
-            if ($this->ReadAttributeBoolean('InstanceState') === false) {
-                $this->WriteAttributeBoolean('InstanceState', true); // Set Running State
+            $semaName = "SSC_Inst_".$this->InstanceID;
+            if (IPS_SemaphoreEnter($semaName, 1000)) {
+                $this->SendDebug('message-sink', "Semaphore ".$semaName." OK", 0);
                 $result = $this->validateShadowing($Data[0], $SenderID);
                 $this->executeShadowing($result);
-                $this->WriteAttributeBoolean('InstanceState', false); // Clear Running State
+
+                IPS_SemaphoreLeave($semaName);
             } else {
-                $this->SendDebug('message-sink', "Parallel Execute (from Sender: ".$SenderID." not allowed - Skipping", 0);
+                $this->SendDebug('message-sink', "Parallel Execute (from Sender: ".$SenderID." not allowed - Semaphore ".$semaName." in use - Skipping", 0);
             }
         }
     }
