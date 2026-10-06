@@ -35,7 +35,7 @@ class SimpleShadowingController extends IPSModuleStrict {
         $ActiveOptions = json_encode([
             [
                 'Value' => true,
-                'Caption' => 'Automatik',
+                'Caption' => 'Aktiviert',
                 'IconActive' => false,
                 'Icon' => '',
                 'Color' => 0x00ff00
