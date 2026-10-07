@@ -37,13 +37,13 @@ class SimpleShadowingController extends IPSModuleStrict {
                 'Value' => true,
                 'Caption' => 'Aktiviert',
                 'IconActive' => false,
-                'Icon' => '',
+                'IconValue' => '',
                 'Color' => 0x00ff00
             ],[
                 'Value' => false,
                 'Caption' => 'Deaktiviert',
                 'IconActive' => false,
-                'Icon' => '',
+                'IconValue' => '',
                 'Color' => 0xff0000
             ]
         ]);    
@@ -73,15 +73,17 @@ class SimpleShadowingController extends IPSModuleStrict {
 
         $this->RegisterVariableBoolean('StatusShadowing', 'Status', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'shutters'], 6);
 
-        $this->RegisterVariableInteger("AverageBrightness", 'Durchschnitt Helligkeit', [
+        $createAverageBrightness = $this->RegisterVariableInteger("AverageBrightness", 'Durchschnitt Helligkeit', [
             "PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             "MIN" => 0,
             "MAX" => 100000,
             "SUFFIX" => " Lux", 
             "ICON" => "brightness"
         ], 7);
-        $varAvgBrId = $this->GetIDForIdent("AverageBrightness");
-        IPS_SetHidden ($varAvgBrId, true);
+        if ($createAverageBrightness) {
+            $varAvgBrId = $this->GetIDForIdent("AverageBrightness");
+            IPS_SetHidden ($varAvgBrId, true);
+        }
 
         $createAutomaticControl = $this->RegisterVariableBoolean('AutomaticControl', 'Automatische Steuerung', ['PRESENTATION' => VARIABLE_PRESENTATION_ENUMERATION, 'ICON' => 'power-off', 'OPTIONS' => $ActiveOptions], 8);
         if ($createAutomaticControl) {
