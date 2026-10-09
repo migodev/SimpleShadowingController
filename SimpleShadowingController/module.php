@@ -56,7 +56,7 @@ class SimpleShadowingController extends IPSModuleStrict {
         $this->RegisterVariableBoolean('EvaluationIndoorTemperature', 'Auswertung Innentemperaturen', ['PRESENTATION' => VARIABLE_PRESENTATION_ENUMERATION, 'ICON' => 'temperature-high', 'OPTIONS' => $ActiveOptions], 3);
         $this->EnableAction('EvaluationIndoorTemperature');
 
-        $this->RegisterVariableInteger('PauseBetweenMovements', 'Pause zwischen 2 Bewegungen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_INPUT, 'ICON' => 'circle-pause', "SUFFIX" => " Minuten"], 4);
+        $this->RegisterVariableInteger('PauseBetweenMovements', 'Pause zwischen 2 Bewegungen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_INPUT, "SUFFIX" => " Minuten"], 4);
         $this->EnableAction('PauseBetweenMovements');
         
         $this->RegisterVariableInteger("tresholdBrightness", 'Grenzwert Helligkeit', [
