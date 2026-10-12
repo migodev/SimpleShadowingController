@@ -409,9 +409,9 @@ class SimpleShadowingController extends IPSModuleStrict {
         }
 
         // Check Outdoor Temperature
+        $threshold = $this->ReadPropertyFloat('ThresholdTemperature');
         if (($this->GetValue('ColdShadowing') === false) && ($this->ReadPropertyInteger('InputOutdoorTemperature') > 1)) {
             $outdoorTemp = floatval(GetValue($this->ReadPropertyInteger('InputOutdoorTemperature')));
-            $threshold = $this->ReadPropertyFloat('ThresholdTemperature');
             if ($outdoorTemp < $threshold) {
                 $this->SetActive(false);
                 $this->SendDebug('status', "disabled by ColdShadowing - Temperature (".$outdoorTemp.") below threshold (".$threshold.")", 0);
@@ -422,6 +422,12 @@ class SimpleShadowingController extends IPSModuleStrict {
                     $this->SendDebug('status', "enabled by ColdShadowing - Temperature (".$outdoorTemp.") above threshold (".$threshold.")", 0);
                 }
             }
+        } elseif (($this->GetValue('ColdShadowing') === true) && ($this->ReadPropertyInteger('InputOutdoorTemperature') > 1)) {
+            if ($this->GetValue('EvaluationIndoorTemperature') === false) {
+                // Only if Indoor Temperature Check is not active
+                $this->SetActive(true);
+                $this->SendDebug('status', "enabled by ColdShadowing - Ignoring threshold (".$threshold.")", 0);
+            }  
         }
 
         // if we want indoor temperature based shadowing
