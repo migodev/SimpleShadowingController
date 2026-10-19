@@ -308,9 +308,19 @@ class SimpleShadowingController extends IPSModuleStrict {
     private function executeShadowing(bool $doShadowing): bool {
         $this->SendDebug('execute', "Calling executeShadowing with Param: ".json_encode($doShadowing), 0);
 
-        if (($this->GetValue('Active') !== true) && ($doShadowing === true)) {
-            $this->SendDebug('execute', "Shadowing not active, exit", 0);
-            return false;
+        // get Shadowing Status
+        $currentStatus = $this->GetValue('StatusShadowing');
+        $this->SendDebug('StatusShadowing', json_encode($currentStatus), 0);
+
+        if ($this->GetValue('Active') !== true) {
+            // Check if Shadowing is currently active, so we end shadowing
+            if ($currentStatus === true) {
+                $this->SendDebug('execute', "Shadowing not active, but currently Status Shadowing is true, so we End Shadowing now", 0);
+                $doShadowing = false;
+            } else {
+                $this->SendDebug('execute', "Shadowing not active, exit", 0);
+                return false;
+            }
         }
         
         if ($this->GetValue('AutomaticControl') === false) {
@@ -330,10 +340,6 @@ class SimpleShadowingController extends IPSModuleStrict {
         $shadowingPercent   = $this->ReadPropertyInteger("ShadowingPercent");
         $openPercent        = $this->ReadPropertyInteger("OpenPercent");
 
-        // get Shadowing Status
-        $currentStatus = $this->GetValue('StatusShadowing');
-        $this->SendDebug('StatusShadowing', json_encode($currentStatus), 0);
-        
         //Keep Pause for defined minutes
         if (($doShadowing === true) && ($currentStatus === false)) {
             if ($this->checkAndSetPause() === false) { return false; }
@@ -442,11 +448,9 @@ class SimpleShadowingController extends IPSModuleStrict {
                 if ($curTemp >= $tarTemp) {
                     $this->SetActive(true);
                     $this->SendDebug('status', "enabled by Indoor Temperature", 0);
-                    return true;
                 } elseif ($curTemp < $tarTemp) {
                     $this->SetActive(false);
                     $this->SendDebug('status', "disabled by Indoor Temperature", 0);
-                    return false;
                 }
             }
         }else {
