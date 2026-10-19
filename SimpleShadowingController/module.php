@@ -343,11 +343,17 @@ class SimpleShadowingController extends IPSModuleStrict {
         //Keep Pause for defined minutes
         if (($doShadowing === true) && ($currentStatus === false)) {
             if ($this->checkAndSetPause() === false) { return false; }
+            // Set Shadowing Status
+            $this->SetValue('StatusShadowing', true);
+            $this->SendDebug('setStatus', "set to true", 0);
         } elseif (($doShadowing === false) && ($currentStatus === true)) {
             if ($this->GetValue('Active') === true) {
                 // only check time if instance is active, otherwise execute
                 if ($this->checkAndSetPause() === false) { return false; }
             }
+            // Set Shadowing Status
+            $this->SetValue('StatusShadowing', false);
+            $this->SendDebug('setStatus', "set to false", 0);
         } else {
             $this->SendDebug('execute', "Nothing Todo - Shutters are already moved - EXIT", 0);
             return false;
@@ -369,7 +375,6 @@ class SimpleShadowingController extends IPSModuleStrict {
                 } else {
                     SetValue($shutterId, $shadowingPercent);
                 }
-                $this->SetValue('StatusShadowing', true);
                 $this->SendDebug('execute', "Do Shadowing on ".$shutterId." and move to percent: ".$shadowingPercent, 0);
             } elseif (($doShadowing === false) && ($currentStatus === true)) {
                 if ($this->ReadPropertyInteger('MoveMode') !== 1) {
@@ -378,10 +383,8 @@ class SimpleShadowingController extends IPSModuleStrict {
                     } else {
                         SetValue($shutterId, $openPercent);
                     }
-                    $this->SetValue('StatusShadowing', false);
                     $this->SendDebug('execute', "End Shadowing on ".$shutterId." and move to percent: ".$openPercent, 0);
                 } else {
-                    $this->SetValue('StatusShadowing', false);
                     $this->SendDebug('execute', "End Shadowing on ".$shutterId.", because of MoveMode 1 we do not open - But Shadowing is on exit", 0);
                 }
             }
