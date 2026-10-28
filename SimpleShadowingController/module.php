@@ -206,6 +206,11 @@ class SimpleShadowingController extends IPSModuleStrict {
             if ($Value === false) {
                 $this->executeShadowing(false);
             }
+
+            // in manual Mode call execute
+            if (($this->GetValue('AutomaticControl') === false) && ($Value === true)) {
+                $this->executeShadowing(true);
+            }
         }
     }
 
@@ -323,9 +328,10 @@ class SimpleShadowingController extends IPSModuleStrict {
             }
         }
         
-        if ($this->GetValue('AutomaticControl') === false) {
-            $this->SendDebug('automatic-control exec', "automatic-control is disabled and exit", 0);
-            return false;
+        // Do Shadowing in manual mode
+        if (($this->GetValue('AutomaticControl') === false) && ($this->GetValue('Active') === true)) {
+            $this->SendDebug('automatic-control exec', "automatic-control is disabled, but Shadowing is active, so we start shadowing", 0);
+            $doShadowing = true;
         }
 
         if ($this->ReadPropertyInteger("GlobalShutterControlVariable") > 0) {                
