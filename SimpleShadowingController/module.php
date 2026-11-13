@@ -366,12 +366,15 @@ class SimpleShadowingController extends IPSModuleStrict {
         }
 
         $shutterVariables = json_decode($this->ReadPropertyString('ShutterVariables'), true);
+        $shutters = count($shutterVariables);
+        $failedShutters = 0;
         foreach ($shutterVariables as $shutter) {
             $shutterId = $shutter['VariableID'];
 
             // skip > than Ignore-Value shutter
             if (GetValue($shutterId) >= $this->ReadPropertyInteger('IgnoreShutterPercent')) {
                 $this->SendDebug('execute', "Skip Shutter with ID ".$shutterId." because its closed: greater (".GetValue($shutterId)."%) than ".$this->ReadPropertyInteger('IgnoreShutterPercent')."%", 0);
+                $failedShutters++;
                 continue;
             }
             
@@ -395,6 +398,15 @@ class SimpleShadowingController extends IPSModuleStrict {
                 }
             }
         }
+        
+        //Maybe Shadowing will begin before all shutters are open from night
+        if ($failedShutters == $shutters) {
+            $this->SendDebug('execute', "All shutters are greater then Ignore value - So maybe they are all closed during night", 0);
+            // Set Shadowing Status
+            $this->SetValue('StatusShadowing', false);
+            $this->SendDebug('setStatus', "set to false", 0);
+        }
+
         return true;
     }
 
