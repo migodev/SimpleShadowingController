@@ -122,6 +122,7 @@ class SimpleShadowingController extends IPSModuleStrict {
             $this->RegisterReference($this->ReadPropertyInteger("InputOutdoorTemperature"));
         }
         if ($this->ReadPropertyInteger("InputTemperatureTargetVariable") > 0) {
+            $this->RegisterMessage($this->ReadPropertyInteger("InputTemperatureTargetVariable"), VM_UPDATE);
             $this->RegisterReference($this->ReadPropertyInteger("InputTemperatureTargetVariable"));
         }
         if ($this->ReadPropertyInteger("AzimutId") > 0) {
@@ -412,7 +413,13 @@ class SimpleShadowingController extends IPSModuleStrict {
 
     private function validateShadowing(mixed $data, int $senderId): bool {
         //Exit if global shadowing is disabled
-        $globalShadowingStatus = GetValue($this->ReadPropertyInteger('GlobalShadowingStatusVariable'));
+        if ($this->ReadPropertyInteger('GlobalShadowingStatusVariable') > 1) {
+            $globalShadowingStatus = GetValue($this->ReadPropertyInteger('GlobalShadowingStatusVariable'));
+        } else {
+            $globalShadowingStatus = true;
+            $this->SendDebug('globalShadowingStatus', "GlobalShadowingStatusVariable not set, default is true", 0);
+        }
+
         $this->SendDebug('globalShadowingStatus', json_encode($globalShadowingStatus), 0);
         $this->SendDebug('EvaluationIndoorTemperature', json_encode($this->GetValue('EvaluationIndoorTemperature')), 0);
 
@@ -585,6 +592,7 @@ class SimpleShadowingController extends IPSModuleStrict {
 
         // find General Category & identify Bool Variable for global shadowing
         $foundGeneralCategory = false;
+        $ShadowingCatId = 0;
         $cat = IPS_GetCategoryList();
         foreach ($cat as $c) {
             $catInfo = IPS_GetObject($c);
@@ -601,9 +609,18 @@ class SimpleShadowingController extends IPSModuleStrict {
         if ($varBeschattungsID === false) {
             // Creates Category & Global Variable
             if ($foundGeneralCategory === false) {
-                $CatID = IPS_CreateCategory();
-                IPS_SetName($CatID, "Allgemein");
-                IPS_SetParent($CatID, 0);
+                $CatID = 0;
+                foreach ($cat as $c) {
+                    if (IPS_GetParent($c) === 0 && IPS_GetName($c) === "Allgemein") {
+                        $CatID = $c;
+                        break;
+                    }
+                }
+                if ($CatID === 0) {
+                    $CatID = IPS_CreateCategory();
+                    IPS_SetName($CatID, "Allgemein");
+                    IPS_SetParent($CatID, 0);
+                }
 
                 $CatID_BS = IPS_CreateCategory();
                 IPS_SetName($CatID_BS, "Beschattung");
